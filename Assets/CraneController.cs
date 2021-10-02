@@ -34,9 +34,9 @@ public class CraneController : MonoBehaviour
 
     void Start()
     {
-        TractorBeamControllerPIDX = new PID(4.0f, 0.5f, 5.0f);
-        TractorBeamControllerPIDY = new PID(4.0f, 0.5f, 5.0f);
-        TractorBeamControllerPIDZ = new PID(4.0f, 0.5f, 5.0f);
+        TractorBeamControllerPIDX = new PID(9.0f, 0.5f, 10.0f);
+        TractorBeamControllerPIDY = new PID(9.0f, 0.5f, 10.0f);
+        TractorBeamControllerPIDZ = new PID(9.0f, 0.5f, 10.0f);
     }
 
     // Update is called once per frame
@@ -47,6 +47,7 @@ public class CraneController : MonoBehaviour
             if (Input.GetButtonDown("TractorBeamAttach")) {
                 // Drop the picked up block
                 Debug.Log("Dropped block");
+                PickedUp.IsPlaced = true;
                 PickedUp = null;
             } else {
                 // Move picked up object to be inside beam
@@ -57,9 +58,10 @@ public class CraneController : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 1000.0f, BuildingBlock.PhysicsLayer())) {
                 BuildingBlock hitBlock = hit.collider.gameObject.GetComponent<BuildingBlock>();
-                if (hitBlock && Input.GetButtonDown("TractorBeamAttach")) {
+                if (hitBlock && !hitBlock.IsPlaced && Input.GetButtonDown("TractorBeamAttach")) {
                     Debug.Log("Picked up block");
                     PickedUp = hitBlock;
+                    PickedUp.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
                 }
             }
         }
@@ -96,24 +98,50 @@ public class CraneController : MonoBehaviour
         TractorBeamControllerPIDY.LimitIntegral(integralLimit); // Ascending
     }
 
+    float SpeedLimiter(float throttle, float currentSpeed, float maxSpeed)
+    {
+        Rigidbody body = PickedUp.GetComponent<Rigidbody>();
+
+        float newthrottle;
+        float mass = body.mass;
+        float force = TractorBeamForce;
+        float weight = -1.0f * mass * Physics.gravity.y;
+        if (currentSpeed < -maxSpeed)
+        {
+            newthrottle = weight / force;
+            return newthrottle;
+        }
+        else return throttle;
+    }
+
     void MoveBlockInsideBeam()
     {
         Rigidbody body = PickedUp.GetComponent<Rigidbody>();
-        
-        Vector3 desiredPosition = TractorBeam.transform.position + (Vector3.down * 5.0f);
+        Vector3 v = body.velocity;
+
+        Vector3 desiredPosition = TractorBeam.transform.position + (Vector3.down * 6.0f);
         Vector3 currentPosition = PickedUp.transform.position;
 
-        Vector3 throttle = new Vector3();
-        throttle.x = TractorBeamControllerPIDX.Update(desiredPosition.x, currentPosition.x, Time.deltaTime) * 100.0f;
-        throttle.y = TractorBeamControllerPIDY.Update(desiredPosition.y, currentPosition.y, Time.deltaTime) * 100.0f;
-        throttle.z = TractorBeamControllerPIDZ.Update(desiredPosition.z, currentPosition.z, Time.deltaTime) * 100.0f;
+        PickedUp.transform.position = new Vector3(desiredPosition.x, PickedUp.transform.position.y, desiredPosition.z);
 
-        Vector3 v = body.velocity;
-        AntiIntegralCorrection(TractorBeamControllerPIDX, v.x);
+        Vector3 throttle = new Vector3();
+        // throttle.x = TractorBeamControllerPIDX.Update(desiredPosition.x, currentPosition.x, Time.deltaTime) * 10.0f;
+        throttle.y = TractorBeamControllerPIDY.Update(desiredPosition.y, currentPosition.y, Time.deltaTime) * 10.0f;
+        // throttle.z = TractorBeamControllerPIDZ.Update(desiredPosition.z, currentPosition.z, Time.deltaTime) * 10.0f;
+
+        float maxSpeed = 5.0f;
+        // throttle.x = SpeedLimiter(throttle.x, v.x, maxSpeed);
+        // throttle.y = SpeedLimiter(throttle.y, v.y, maxSpeed);
+        // throttle.z = SpeedLimiter(throttle.z, v.z, maxSpeed);
+
+        // AntiIntegralCorrection(TractorBeamControllerPIDX, v.x);
         AntiIntegralCorrection(TractorBeamControllerPIDY, v.y);
-        AntiIntegralCorrection(TractorBeamControllerPIDZ, v.z);
-    
+        // AntiIntegralCorrection(TractorBeamControllerPIDZ, v.z);
+
         Vector3 force = throttle;
+        force.x = Mathf.Clamp(force.x, -TractorBeamForce, TractorBeamForce);
+        force.y = Mathf.Clamp(force.y, -TractorBeamForce, TractorBeamForce);
+        force.z = Mathf.Clamp(force.z, -TractorBeamForce, TractorBeamForce);
 
         Debug.Log("Applying force: " + force);
 

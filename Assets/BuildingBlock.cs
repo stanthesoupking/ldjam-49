@@ -5,6 +5,8 @@ using UnityEngine;
 public class BuildingBlock : MonoBehaviour
 {
 
+    public bool IsPlaced = false;
+
     public static int PhysicsLayer() {
         return LayerMask.GetMask("Block");
     }
@@ -19,5 +21,13 @@ public class BuildingBlock : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public bool IsStable()
+    {
+        Rigidbody body = GetComponent<Rigidbody>();
+        float stableMinVelocity = 0.02f;
+
+        return (body.velocity.magnitude < stableMinVelocity) && (body.angularVelocity.magnitude < stableMinVelocity);
     }
 }
