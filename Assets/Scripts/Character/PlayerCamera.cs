@@ -22,8 +22,8 @@ public class PlayerCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 rotation = new Vector3()
-        transform.position = Player.transform.position + ;
+        //Vector3 rotation = new Vector3()
+        //transform.position = Player.transform.position + ;
         //transform.position = Player.transform.position + (Angle.normalized * Distance);
         //transform.rotation = Quaternion.LookRotation(-Angle.normalized, Vector3.up);
     }

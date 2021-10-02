@@ -48,6 +48,8 @@ public class CraneController : MonoBehaviour
                 // Drop the picked up block
                 Debug.Log("Dropped block");
                 PickedUp.IsPlaced = true;
+                PickedUp.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+                PickedUp.GetComponent<Rigidbody>().useGravity = true;
                 PickedUp = null;
             } else {
                 // Move picked up object to be inside beam
@@ -61,6 +63,7 @@ public class CraneController : MonoBehaviour
                 if (hitBlock && !hitBlock.IsPlaced && Input.GetButtonDown("TractorBeamAttach")) {
                     Debug.Log("Picked up block");
                     PickedUp = hitBlock;
+                    PickedUp.GetComponent<Rigidbody>().useGravity = false;
                     PickedUp.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
                 }
             }
@@ -116,35 +119,39 @@ public class CraneController : MonoBehaviour
 
     void MoveBlockInsideBeam()
     {
+
         Rigidbody body = PickedUp.GetComponent<Rigidbody>();
         Vector3 v = body.velocity;
 
         Vector3 desiredPosition = TractorBeam.transform.position + (Vector3.down * 6.0f);
         Vector3 currentPosition = PickedUp.transform.position;
 
-        PickedUp.transform.position = new Vector3(desiredPosition.x, PickedUp.transform.position.y, desiredPosition.z);
+        PickedUp.transform.position = new Vector3(desiredPosition.x, currentPosition.y, desiredPosition.z);
 
-        Vector3 throttle = new Vector3();
-        // throttle.x = TractorBeamControllerPIDX.Update(desiredPosition.x, currentPosition.x, Time.deltaTime) * 10.0f;
-        throttle.y = TractorBeamControllerPIDY.Update(desiredPosition.y, currentPosition.y, Time.deltaTime) * 10.0f;
-        // throttle.z = TractorBeamControllerPIDZ.Update(desiredPosition.z, currentPosition.z, Time.deltaTime) * 10.0f;
+        float distance = Vector3.Distance(currentPosition, desiredPosition);
+        //Debug.Log(distance);
 
-        float maxSpeed = 5.0f;
-        // throttle.x = SpeedLimiter(throttle.x, v.x, maxSpeed);
-        // throttle.y = SpeedLimiter(throttle.y, v.y, maxSpeed);
-        // throttle.z = SpeedLimiter(throttle.z, v.z, maxSpeed);
+        float desiredVelocityMag = distance * 2.0f;
 
-        // AntiIntegralCorrection(TractorBeamControllerPIDX, v.x);
-        AntiIntegralCorrection(TractorBeamControllerPIDY, v.y);
-        // AntiIntegralCorrection(TractorBeamControllerPIDZ, v.z);
+        float acceleration = (desiredVelocityMag - v.magnitude);
+        //acceleration = 100.0f;
 
-        Vector3 force = throttle;
-        force.x = Mathf.Clamp(force.x, -TractorBeamForce, TractorBeamForce);
-        force.y = Mathf.Clamp(force.y, -TractorBeamForce, TractorBeamForce);
-        force.z = Mathf.Clamp(force.z, -TractorBeamForce, TractorBeamForce);
+        Vector3 direction = (desiredPosition - currentPosition).normalized;
+        Debug.Log(direction);
 
-        Debug.Log("Applying force: " + force);
+        float f = acceleration * body.mass;
 
-        body.AddForce(force);
+        //Vector3 force = direction * f * Time.deltaTime;
+        //force += -Physics.gravity * body.mass * Time.deltaTime;
+
+        //Debug.Log("Applying force: " + force);
+
+        //body.AddForce(direction * 100.0f);
+
+        Vector3 cancelForce = -v * body.mass;
+
+        body.AddForce(direction * f + cancelForce);
+        //body.AddForce(-Physics.gravity * body.mass * Time.deltaTime);
+        //body.AddForce(new Vector3(0, 10, 0) * body.mass * Time.deltaTime);
     }
 }

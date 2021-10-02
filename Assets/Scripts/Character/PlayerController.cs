@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
         Vector3 movement = new Vector3(thumbstick.y, 0, thumbstick.x) * Speed * Time.deltaTime;
 
         // Rotate movement to align with camera
-        Vector3 r = Camera.transform.rotation.eulerAngles.z;
+        //Vector3 r = Camera.transform.rotation.eulerAngles.z;
         Debug.Log("");
 
         transform.rotation = Quaternion.LookRotation(movement);
