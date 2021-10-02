@@ -28,9 +28,7 @@ public class Hook : MonoBehaviour
             }
         }
 
-        bool isInRange = (closestDistance < HookRange);
-        
-        Debug.Log("Closest block = " + closestDistance);
+        bool isInRange = (closestDistance < HookRange);        
         Light.color = isInRange ? Color.green : Color.red;
     }
 }
