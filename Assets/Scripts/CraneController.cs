@@ -77,10 +77,9 @@ public class CraneController : MonoBehaviour
 
         // Hook controls
         float hookAnchorAmount = Input.GetAxis("HookPosition") * HookPositionSpeed * Time.deltaTime;
-        TractorBeam.transform.Translate(Vector3.forward * hookAnchorAmount);
 
         Vector3 beamPosition = TractorBeam.transform.localPosition;
-        beamPosition.z = Mathf.Clamp(beamPosition.z + hookAnchorAmount, HookMinimumPosition, HookMaximumPosition);
+        beamPosition.z = Mathf.Clamp(beamPosition.z - hookAnchorAmount, HookMinimumPosition, HookMaximumPosition);
 
         TractorBeam.transform.localPosition = beamPosition;
     }
@@ -91,7 +90,7 @@ public class CraneController : MonoBehaviour
         Rigidbody body = PickedUp.GetComponent<Rigidbody>();
         Vector3 v = body.velocity;
 
-        Vector3 desiredPosition = TractorBeam.transform.position + (Vector3.down * 6.0f);
+        Vector3 desiredPosition = TractorBeam.transform.position + (Vector3.down * 20.0f);
         Vector3 currentPosition = PickedUp.transform.position;
 
         PickedUp.transform.position = new Vector3(desiredPosition.x, currentPosition.y, desiredPosition.z);
