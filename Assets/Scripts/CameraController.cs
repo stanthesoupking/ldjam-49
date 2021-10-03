@@ -19,6 +19,6 @@ public class CameraController : MonoBehaviour
     {
         float currentHeight = Crane.Arm.transform.position.y;
         
-        transform.position = new Vector3(transform.position.x, HeightOffset + currentHeight, transform.position.z);
+        transform.position = new Vector3(Crane.TractorBeam.transform.position.x, HeightOffset + currentHeight, transform.position.z);
     }
 }

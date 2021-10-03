@@ -10,7 +10,7 @@ Material:
   m_Name: Beam
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION
-  m_LightmapFlags: 2
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
@@ -75,6 +75,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0, b: 0.97566557, a: 0.3254902}
-    - _EmissionColor: {r: 0.7254902, g: 0.094117664, b: 0.38780385, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _EmissionColor: {r: 2.270603, g: 2.270603, b: 2.270603, a: 1}
   m_BuildTextureStacks: []
