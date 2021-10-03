@@ -168,7 +168,7 @@ public class CraneController : MonoBehaviour
 
     bool IsInPlacementZone()
     {
-        return (transform.rotation.y > 0.0f);
+        return (transform.rotation.eulerAngles.y < 90.0f);
     }
 
     public void Reset()

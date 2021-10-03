@@ -114,7 +114,10 @@ public class GameController : MonoBehaviour
     void Update()
     {
 
-        
+        if (Input.GetKey(KeyCode.Escape)) {
+            Debug.Log("Exit");
+            Application.Quit();
+        }
 
     }
 
