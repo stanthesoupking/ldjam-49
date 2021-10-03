@@ -16,6 +16,8 @@ public class CraneController : MonoBehaviour
 
     public float VerticalSpeed = 10.0f;
 
+    public float CraneMinimumHeight;
+
     // Hook Anchor
     public float HookPositionSpeed = 10.0f;
     public float HookMaximumPosition = 1.0f;
@@ -70,6 +72,10 @@ public class CraneController : MonoBehaviour
         // Crane height controls
         float verticalAmount = Input.GetAxis("CraneHeight") * VerticalSpeed * Time.deltaTime;
         Arm.transform.Translate(Vector3.up * verticalAmount);
+
+        if (Arm.transform.position.y < CraneMinimumHeight) {
+            Arm.transform.position = new Vector3(Arm.transform.position.x, CraneMinimumHeight, Arm.transform.position.z);
+        }
 
         // Rope controls
         // float ropeAmount = Input.GetAxis("RopeLength") * RopeSpeed * Time.deltaTime;

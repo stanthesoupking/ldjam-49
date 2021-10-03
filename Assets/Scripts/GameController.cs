@@ -53,7 +53,7 @@ public class GameController : MonoBehaviour
         bool needMoreBlocks = true;
         foreach(BuildingBlock block in FindObjectsOfType<BuildingBlock>())
         {
-            if (!block.IsPlaced)
+            if (!block.IsPlaced || (block.IsPlaced && !block.IsStable()))
             {
                 needMoreBlocks = false;
             }

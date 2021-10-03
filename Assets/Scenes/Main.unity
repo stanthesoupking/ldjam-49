@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 12509714}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.011351347, y: 29.793911, z: 0.01}
+  m_LocalPosition: {x: -0.011351347, y: 50, z: 0.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8459166434615077667}
@@ -3246,6 +3246,7 @@ MonoBehaviour:
   RotateSpeed: 70
   RopeSpeed: 10
   VerticalSpeed: 20
+  CraneMinimumHeight: 50
   HookPositionSpeed: 20
   HookMaximumPosition: -12.3
   HookMinimumPosition: -90.3
